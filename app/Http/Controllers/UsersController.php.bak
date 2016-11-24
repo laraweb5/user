@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+
+use App\User;
+
+class UsersController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //一覧表示
+        $data = User::latest('created_at')->get();
+        return view('user.index')->with('message','ユーザーリスト')->with('data',$data);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //新規作成
+        return view('user.create')->with('message','登録するユーザーを入力してください。');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //新規保存
+        $user = new User();
+        $user->name = $request->input('');
+        $user->mail = $request->input('');
+        $user->gender = $request->input('');
+        $user->age = $request->input('');
+        $user->pref = $request->input('');
+        $user->birthday = $request->input('');
+        $user->tel = $request->input('');
+        $user->save();
+
+        # View表示
+        $res = $request->input('name')."さんを追加しました。";
+        $data = User::latest('created_at')->get();
+       return redirect('/user/')->with('message',$res)->with('data',$data)->with('status','新規保存の処理完了！');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //詳細表示
+        $user = User::findOrFail($id);
+        return view('user.show')->with('user', $user);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //編集
+        $data = User::findOrFail($id);
+        return view('user.edit')->with('message','編集フォーム')->with('data',$data);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //更新
+        $user = User::findOrFail($id);
+        $user->onamae = $request->input('onamae');
+        $user->save();
+        return redirect('/user/')->with('status', '更新処理完了!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //削除
+        $user = User::findOrFail($id);
+        $user->delete();
+        $user = User::all();
+        return redirect('/user/')->with('status', '削除処理完了！')->with('data',$data);
+    }
+}
