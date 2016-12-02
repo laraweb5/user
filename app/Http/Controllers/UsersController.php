@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\User;
 use App\Http\Requests\UserRequest;
 
+
 class UsersController extends Controller
 {
     /**
@@ -14,11 +15,27 @@ class UsersController extends Controller
      * 一覧表示
      *
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = User::latest('created_at')->paginate(10);
-        return view('users.index')->with('message','ユーザーリスト')->with('data',$data);
+        #キーワード受け取り
+        $keyword = $request->input('keyword');
+
+        //クエリ生成
+        $query = User::query();
+
+        //もしキーワードがあったら
+        if(!empty($keyword))
+        {
+            $query->where('name','like','%'.$keyword.'%')->orWhere('mail','like','%'.$keyword.'%');
+        }
+
+        //ページネーション
+        $data = $query->orderBy('created_at','desc')->paginate(10);
+        return view('users.index')->with('data',$data)
+                                  ->with('keyword',$keyword)
+                                  ->with('message','ユーザーリスト');
     }
+
 
     /**
      *
@@ -114,4 +131,6 @@ class UsersController extends Controller
         $data = User::latest('created_at')->get();
         return redirect('/users/')->with('status', '削除処理完了！')->with('data',$data);
     }
+
+
 }
