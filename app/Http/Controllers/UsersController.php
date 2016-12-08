@@ -107,7 +107,7 @@ class UsersController extends Controller
         $user->age = $request->age;
         $user->pref = $request->pref;
         $user->birthday = $request->birthday;
-        $user->tel = $request->tel; /*データ型はchar*/
+        $user->tel = $request->tel;
         $user->save();
 
         # View表示
