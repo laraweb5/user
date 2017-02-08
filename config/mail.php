@@ -55,7 +55,11 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => [
+		//ここの設定を追加
+		'address' => env('MAIL_FROM_ADDRESS',null),
+		'name' => env('MAIL_FROM_NAME',null)
+	],
 
     /*
     |--------------------------------------------------------------------------
